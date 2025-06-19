@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Say "F*ck You" Around the World</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>How to Say "F*ck You" Around the World</h1>
+            <p class="subtitle">A meme-tastic journey through 70 languages of insult</p>
+            <div class="view-toggle">
+                <button id="map-view-btn" class="active">Map View</button>
+                <button id="list-view-btn">List View</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="map-view" class="view active">
+                <div class="map-container">
+                    <!-- SVG World Map will be inserted here by JavaScript -->
+                    <div id="world-map"></div>
+                </div>
+            </div>
+
+            <div id="list-view" class="view">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search for a language or country...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="languages-grid" id="languages-grid">
+                    <!-- Language cards will be generated here by JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Language Detail Modal -->
+        <div id="language-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <h2 id="modal-language-name">Language Name</h2>
+                    <img id="modal-flag" src="" alt="Country Flag">
+                </div>
+                <div class="modal-body">
+                    <div class="phrase-container">
+                        <h3>How to say it:</h3>
+                        <p id="modal-phrase" class="phrase">Phrase goes here</p>
+                        <p id="modal-pronunciation" class="pronunciation">Pronunciation guide</p>
+                    </div>
+                    <div class="audio-container">
+                        <h3>How it sounds:</h3>
+                        <button id="play-audio" class="play-btn">
+                            <i class="fas fa-play"></i> Play
+                        </button>
+                        <div class="audio-wave">
+                            <div class="wave"></div>
+                        </div>
+                    </div>
+                    <div class="fun-fact-container">
+                        <h3>Fun fact:</h3>
+                        <p id="modal-fun-fact" class="fun-fact">Fun fact about this phrase</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="random-language-btn" class="random-btn">
+                        <i class="fas fa-random"></i> Random Language
+                    </button>
+                    <button id="share-btn" class="share-btn">
+                        <i class="fas fa-share-alt"></i> Share This Insult
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Created for educational and humorous purposes only. No offense intended.</p>
+            <p>© 2025 F*ck You Worldwide</p>
+        </footer>
+    </div>
+
+    <!-- Audio element for playing sounds -->
+    <audio id="audio-player" src=""></audio>
+
+    <!-- Scripts -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/world-atlas@2/countries-110m.json"></script>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

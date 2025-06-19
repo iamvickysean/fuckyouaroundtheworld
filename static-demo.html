@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Say "F*ck You" Around the World - Static Demo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        /* Additional styles for the static demo */
+        .demo-notice {
+            background-color: rgba(255, 255, 0, 0.2);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .demo-notice p {
+            margin: 5px 0;
+            font-style: italic;
+        }
+        
+        .demo-notice strong {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>How to Say "F*ck You" Around the World</h1>
+            <p class="subtitle">A meme-tastic journey through 70 languages of insult</p>
+            
+            <div class="demo-notice">
+                <p><strong>Static Demo Mode</strong></p>
+                <p>This is a simplified static version of the website. For the full experience with audio and API functionality, run the Node.js server.</p>
+                <p>To run the server: <code>npm install</code> then <code>npm start</code></p>
+            </div>
+            
+            <div class="view-toggle">
+                <button id="map-view-btn" class="active">Map View</button>
+                <button id="list-view-btn">List View</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="map-view" class="view active">
+                <div class="map-container">
+                    <!-- SVG World Map will be inserted here by JavaScript -->
+                    <div id="world-map"></div>
+                </div>
+            </div>
+
+            <div id="list-view" class="view">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search for a language or country...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="languages-grid" id="languages-grid">
+                    <!-- Language cards will be generated here by JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Language Detail Modal -->
+        <div id="language-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <h2 id="modal-language-name">Language Name</h2>
+                    <img id="modal-flag" src="" alt="Country Flag">
+                </div>
+                <div class="modal-body">
+                    <div class="phrase-container">
+                        <h3>How to say it:</h3>
+                        <p id="modal-phrase" class="phrase">Phrase goes here</p>
+                        <p id="modal-pronunciation" class="pronunciation">Pronunciation guide</p>
+                    </div>
+                    <div class="audio-container">
+                        <h3>How it sounds:</h3>
+                        <button id="play-audio" class="play-btn">
+                            <i class="fas fa-play"></i> Play
+                        </button>
+                        <div class="audio-wave">
+                            <div class="wave"></div>
+                        </div>
+                        <p class="demo-notice"><strong>Note:</strong> Using browser's speech synthesis for audio</p>
+                    </div>
+                    <div class="fun-fact-container">
+                        <h3>Fun fact:</h3>
+                        <p id="modal-fun-fact" class="fun-fact">Fun fact about this phrase</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="random-language-btn" class="random-btn">
+                        <i class="fas fa-random"></i> Random Language
+                    </button>
+                    <button id="share-btn" class="share-btn">
+                        <i class="fas fa-share-alt"></i> Share This Insult
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Created for educational and humorous purposes only. No offense intended.</p>
+            <p>© 2025 F*ck You Worldwide</p>
+        </footer>
+    </div>
+
+    <!-- Audio element for playing sounds -->
+    <audio id="audio-player" src=""></audio>
+
+    <!-- Scripts -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://unpkg.com/world-atlas@2/countries-110m.json"></script>
+    <script src="data.js"></script>
+    <script>
+        // Override functions for the static demo
+        document.addEventListener('DOMContentLoaded', () => {
+            // Override the initMap function to handle map loading errors
+            window.initMap = function() {
+                const width = worldMap.clientWidth;
+                const height = worldMap.clientHeight;
+                
+                // Create SVG element
+                const svg = d3.select('#world-map')
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height);
+                
+                // Add a message about the map
+                svg.append('text')
+                    .attr('x', width / 2)
+                    .attr('y', height / 2)
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', '#ffff00')
+                    .style('font-size', '24px')
+                    .style('font-style', 'italic')
+                    .text('Map View is only available in the full version');
+                
+                // Add a subtitle
+                svg.append('text')
+                    .attr('x', width / 2)
+                    .attr('y', (height / 2) + 40)
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', '#00ffff')
+                    .style('font-size', '18px')
+                    .text('Please use the List View to explore languages');
+                
+                console.log('Static demo: Using simplified map view');
+            };
+            
+            // Wait for the script.js to load and execute
+            setTimeout(() => {
+                // Override the playAudio function
+                window.playAudio = function() {
+                    if (!currentLanguage) return;
+                    
+                    if (audioPlaying) {
+                        // Stop audio
+                        if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                            window.speechSynthesis.cancel();
+                        }
+                        
+                        audioPlaying = false;
+                        audioWave.classList.remove('playing');
+                        playAudioBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                    } else {
+                        // Use browser's speech synthesis
+                        if (!window.speechSynthesis) {
+                            console.error('Speech synthesis not supported');
+                            alert('Sorry, your browser does not support speech synthesis. Try using a modern browser like Chrome, Edge, or Safari.');
+                            return;
+                        }
+                        
+                        // Cancel any ongoing speech
+                        window.speechSynthesis.cancel();
+                        
+                        // Create a new utterance
+                        const utterance = new SpeechSynthesisUtterance(currentLanguage.phrase);
+                        
+                        // Set the language based on the country code
+                        const languageMapping = {
+                            'US': 'en-US',     // English (US)
+                            'ES': 'es-ES',     // Spanish
+                            'FR': 'fr-FR',     // French
+                            'DE': 'de-DE',     // German
+                            'IT': 'it-IT',     // Italian
+                            'PT': 'pt-PT',     // Portuguese
+                            'RU': 'ru-RU',     // Russian
+                            'JP': 'ja-JP',     // Japanese
+                            'CN': 'zh-CN',     // Mandarin Chinese
+                            'KR': 'ko-KR',     // Korean
+                            'SA': 'ar-SA',     // Arabic
+                            'IN': 'hi-IN',     // Hindi
+                            'TR': 'tr-TR',     // Turkish
+                            'NL': 'nl-NL',     // Dutch
+                            'SE': 'sv-SE',     // Swedish
+                            'PL': 'pl-PL',     // Polish
+                            'GR': 'el-GR',     // Greek
+                            'IL': 'he-IL',     // Hebrew
+                            'TH': 'th-TH',     // Thai
+                            'VN': 'vi-VN',     // Vietnamese
+                            'NO': 'nb-NO',     // Norwegian
+                            'FI': 'fi-FI',     // Finnish
+                            'DK': 'da-DK',     // Danish
+                            'CZ': 'cs-CZ',     // Czech
+                            'HU': 'hu-HU',     // Hungarian
+                            'RO': 'ro-RO',     // Romanian
+                            'BG': 'bg-BG',     // Bulgarian
+                            'HR': 'hr-HR',     // Croatian
+                            'UA': 'uk-UA',     // Ukrainian
+                            'PH': 'fil-PH',    // Filipino
+                            'ID': 'id-ID',     // Indonesian
+                            'MY': 'ms-MY',     // Malay
+                            'ZA': 'af-ZA',     // Afrikaans
+                            'IR': 'fa-IR',     // Persian
+                            'PK': 'ur-PK',     // Urdu
+                            'BD': 'bn-BD',     // Bengali
+                            'LK': 'si-LK',     // Sinhalese
+                            'GB': 'en-GB',     // British English
+                            'IE': 'en-IE',     // Irish English
+                            'AU': 'en-AU',     // Australian English
+                            'CA': 'en-CA',     // Canadian English
+                            'NZ': 'en-NZ'      // New Zealand English
+                        };
+                        
+                        // Try to use the specific language code, or fall back to a generic one
+                        let langCode = languageMapping[currentLanguage.countryCode];
+                        
+                        // If no specific mapping, try to use a generic language code
+                        if (!langCode) {
+                            // Default to English if no mapping is found
+                            console.log(`No specific language mapping for ${currentLanguage.countryCode}, using English`);
+                            langCode = 'en-US';
+                        }
+                        
+                        utterance.lang = langCode;
+                        
+                        // For debugging
+                        console.log(`Playing "${currentLanguage.phrase}" in language: ${utterance.lang}`);
+                        
+                        // Set up event handlers
+                        utterance.onstart = () => {
+                            audioPlaying = true;
+                            audioWave.classList.add('playing');
+                            playAudioBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+                        };
+                        
+                        utterance.onend = () => {
+                            audioPlaying = false;
+                            audioWave.classList.remove('playing');
+                            playAudioBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                        };
+                        
+                        utterance.onerror = (event) => {
+                            console.error('Speech synthesis error:', event);
+                            audioPlaying = false;
+                            audioWave.classList.remove('playing');
+                            playAudioBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                            
+                            // Try again with English voice as fallback
+                            console.log('Trying fallback to English voice...');
+                            const fallbackUtterance = new SpeechSynthesisUtterance(currentLanguage.phrase);
+                            fallbackUtterance.lang = 'en-US';
+                            
+                            fallbackUtterance.onstart = () => {
+                                audioPlaying = true;
+                                audioWave.classList.add('playing');
+                                playAudioBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+                            };
+                            
+                            fallbackUtterance.onend = () => {
+                                audioPlaying = false;
+                                audioWave.classList.remove('playing');
+                                playAudioBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                            };
+                            
+                            fallbackUtterance.onerror = (fallbackEvent) => {
+                                console.error('Fallback speech synthesis error:', fallbackEvent);
+                                audioPlaying = false;
+                                audioWave.classList.remove('playing');
+                                playAudioBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                                alert('Sorry, your browser could not play the audio. Try using Chrome or Edge for best results.');
+                            };
+                            
+                            window.speechSynthesis.speak(fallbackUtterance);
+                        };
+                        
+                        // Speak the phrase
+                        try {
+                            window.speechSynthesis.speak(utterance);
+                        } catch (error) {
+                            console.error('Error speaking:', error);
+                            // Try fallback
+                            const fallbackUtterance = new SpeechSynthesisUtterance(currentLanguage.phrase);
+                            fallbackUtterance.lang = 'en-US';
+                            window.speechSynthesis.speak(fallbackUtterance);
+                        }
+                    }
+                };
+                
+                console.log('Static demo: Speech synthesis enabled for audio playback');
+            }, 500);
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
